@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "WhatsApp reminder app with MVC structure",
   "main": "index.js",
+  "license": "MIT",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
