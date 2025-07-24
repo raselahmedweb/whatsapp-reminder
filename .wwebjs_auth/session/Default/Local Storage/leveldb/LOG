@@ -1,8 +1,0 @@
-2025/07/23-17:07:12.169 1dfc Creating DB C:\Users\Coffe\Documents\whatsapp-reminder\.wwebjs_auth\session\Default\Local Storage\leveldb since it was missing.
-2025/07/23-17:07:12.235 1dfc Reusing MANIFEST C:\Users\Coffe\Documents\whatsapp-reminder\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
-2025/07/23-19:17:35.343 28e4 Level-0 table #5: started
-2025/07/23-19:17:35.352 28e4 Level-0 table #5: 18224 bytes OK
-2025/07/23-19:17:35.358 28e4 Delete type=0 #3
-2025/07/24-00:57:50.308 64f0 Level-0 table #7: started
-2025/07/24-00:57:50.322 64f0 Level-0 table #7: 15174 bytes OK
-2025/07/24-00:57:50.329 64f0 Delete type=0 #4

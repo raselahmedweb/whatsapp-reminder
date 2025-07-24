@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WhatsApp Reminder Manager</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+      }
+
+      .header p {
+        opacity: 0.9;
+        font-size: 1.1rem;
+      }
+
+      .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        padding: 30px;
+      }
+
+      .form-section {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 15px;
+        border: 1px solid #e9ecef;
+      }
+
+      .form-section h2 {
+        color: #343a40;
+        margin-bottom: 20px;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: #495057;
+        font-weight: 600;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: #25d366;
+        box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .btn {
+        background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: transform 0.2s ease;
+        width: 100%;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      }
+
+      .btn-danger:hover {
+        box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+      }
+
+      .data-section {
+        margin-top: 30px;
+        padding: 0 30px 30px;
+      }
+
+      .data-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+
+      .data-list {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 15px;
+        border: 1px solid #e9ecef;
+      }
+
+      .data-item {
+        background: white;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        border-left: 4px solid #25d366;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .data-item h4 {
+        color: #343a40;
+        margin-bottom: 8px;
+      }
+
+      .data-item p,
+      .data-item small {
+        color: #6c757d;
+        margin-bottom: 5px;
+      }
+
+      .cron-helper {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 10px;
+      }
+
+      .cron-helper h4 {
+        color: #856404;
+        margin-bottom: 10px;
+      }
+
+      .cron-examples {
+        font-size: 14px;
+        color: #856404;
+      }
+
+      .status-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .status-active {
+        background: #28a745;
+      }
+      .status-inactive {
+        background: #dc3545;
+      }
+
+      .actions {
+        margin-top: 10px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn-small {
+        padding: 6px 12px;
+        font-size: 14px;
+        width: auto;
+      }
+
+      .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        display: none;
+      }
+
+      .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      @media (max-width: 768px) {
+        .main-content,
+        .data-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>📱 WhatsApp Reminder Manager</h1>
+        <p>Manage phone numbers and scheduled messages</p>
+      </div>
+
+      <div class="main-content">
+        <!-- Phone Form -->
+        <div class="form-section">
+          <h2>📞 Add Phone Number</h2>
+          <div id="phoneAlert" class="alert"></div>
+          <form id="phoneForm">
+            <div class="form-group">
+              <label for="phoneNumber">Phone Number</label>
+              <input
+                type="text"
+                id="phoneNumber"
+                placeholder="639279382092"
+                required
+              />
+              <small style="color: #6c757d"
+                >Enter number without @c.us (will be added automatically)</small
+              >
+            </div>
+            <div class="form-group">
+              <label for="phoneName">Name (Optional)</label>
+              <input type="text" id="phoneName" placeholder="John Doe" />
+            </div>
+            <button type="submit" class="btn">Add Phone Number</button>
+          </form>
+        </div>
+
+        <!-- Message Form -->
+        <div class="form-section">
+          <h2>💬 Add Scheduled Message</h2>
+          <div id="messageAlert" class="alert"></div>
+          <form id="messageForm">
+            <div class="form-group">
+              <label for="messageTitle">Title</label>
+              <input
+                type="text"
+                id="messageTitle"
+                placeholder="Daily Reminder"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="messageText">Message</label>
+              <textarea
+                id="messageText"
+                placeholder="🕛 Good morning! Please remember to clock in before 8 AM."
+                required
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="cronTime">Cron Schedule</label>
+              <input
+                type="text"
+                id="cronTime"
+                placeholder="55 07 * * *"
+                required
+              />
+            </div>
+            <button type="submit" class="btn">Schedule Message</button>
+          </form>
+
+          <div class="cron-helper">
+            <h4>Cron Format Help</h4>
+            <div class="cron-examples">
+              <p><strong>Format:</strong> minute hour day month weekday</p>
+              <p><strong>Examples:</strong></p>
+              <p>• <code>55 07 * * *</code> - Every day at 7:55 AM</p>
+              <p>• <code>0 12 * * 1-5</code> - Weekdays at 12:00 PM</p>
+              <p>• <code>30 18 * * 0</code> - Sundays at 6:30 PM</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="data-section">
+        <div class="data-grid">
+          <!-- Phone Numbers List -->
+          <div class="data-list">
+            <h2>📞 Phone Numbers</h2>
+            <div id="phonesList">
+              <p style="color: #6c757d; text-align: center">Loading...</p>
+            </div>
+          </div>
+
+          <!-- Messages List -->
+          <div class="data-list">
+            <h2>💬 Scheduled Messages</h2>
+            <div id="messagesList">
+              <p style="color: #6c757d; text-align: center">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // API helper functions
+      const api = {
+        async get(url) {
+          const response = await fetch(url);
+          return response.json();
+        },
+
+        async post(url, data) {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          return response.json();
+        },
+
+        async delete(url) {
+          const response = await fetch(url, { method: "DELETE" });
+          return response.json();
+        },
+      };
+
+      // Alert helper
+      function showAlert(elementId, message, type = "success") {
+        const alert = document.getElementById(elementId);
+        alert.className = `alert alert-${
+          type === "success" ? "success" : "error"
+        }`;
+        alert.textContent = message;
+        alert.style.display = "block";
+
+        setTimeout(() => {
+          alert.style.display = "none";
+        }, 5000);
+      }
+
+      // Phone form handler
+      document
+        .getElementById("phoneForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const phone = document.getElementById("phoneNumber").value;
+          const name = document.getElementById("phoneName").value;
+
+          try {
+            const result = await api.post("/api/phones", { phone, name });
+
+            if (result.success) {
+              showAlert("phoneAlert", "Phone number added successfully!");
+              document.getElementById("phoneForm").reset();
+              loadPhones();
+            } else {
+              showAlert("phoneAlert", result.message, "error");
+            }
+          } catch (error) {
+            showAlert("phoneAlert", "Error adding phone number", "error");
+            console.error("Error:", error);
+          }
+        });
+
+      // Message form handler
+      document
+        .getElementById("messageForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const title = document.getElementById("messageTitle").value;
+          const message = document.getElementById("messageText").value;
+          const cronTime = document.getElementById("cronTime").value;
+
+          try {
+            const result = await api.post("/api/messages", {
+              title,
+              message,
+              cronTime,
+            });
+
+            if (result.success) {
+              showAlert("messageAlert", "Message scheduled successfully!");
+              document.getElementById("messageForm").reset();
+              loadMessages();
+            } else {
+              showAlert("messageAlert", result.message, "error");
+            }
+          } catch (error) {
+            showAlert("messageAlert", "Error scheduling message", "error");
+            console.error("Error:", error);
+          }
+        });
+
+      // Load and display phones
+      async function loadPhones() {
+        try {
+          const result = await api.get("/api/phones");
+          const phonesList = document.getElementById("phonesList");
+
+          if (result.success && result.data.length > 0) {
+            phonesList.innerHTML = result.data
+              .map(
+                (phone) => `
+                        <div class="data-item">
+                            <h4>
+                                <span class="status-indicator ${
+                                  phone.isActive
+                                    ? "status-active"
+                                    : "status-inactive"
+                                }"></span>
+                                ${phone.name}
+                            </h4>
+                            <p><strong>Phone:</strong> ${phone.phone}</p>
+                            <small>Added: ${new Date(
+                              phone.createdAt
+                            ).toLocaleString()}</small>
+                            <div class="actions">
+                                <button class="btn btn-danger btn-small" onclick="deletePhone('${
+                                  phone._id
+                                }')">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    `
+              )
+              .join("");
+          } else {
+            phonesList.innerHTML =
+              '<p style="color: #6c757d; text-align: center;">No phone numbers added yet.</p>';
+          }
+        } catch (error) {
+          console.error("Error loading phones:", error);
+          document.getElementById("phonesList").innerHTML =
+            '<p style="color: #dc3545; text-align: center;">Error loading phone numbers.</p>';
+        }
+      }
+
+      // Load and display messages
+      async function loadMessages() {
+        try {
+          const result = await api.get("/api/messages");
+          const messagesList = document.getElementById("messagesList");
+
+          if (result.success && result.data.length > 0) {
+            messagesList.innerHTML = result.data
+              .map(
+                (msg) => `
+                        <div class="data-item">
+                            <h4>
+                                <span class="status-indicator ${
+                                  msg.isActive
+                                    ? "status-active"
+                                    : "status-inactive"
+                                }"></span>
+                                ${msg.title}
+                            </h4>
+                            <p><strong>Message:</strong> ${msg.message.substring(
+                              0,
+                              100
+                            )}${msg.message.length > 100 ? "..." : ""}</p>
+                            <p><strong>Schedule:</strong> ${msg.cronTime}</p>
+                            <small>Created: ${new Date(
+                              msg.createdAt
+                            ).toLocaleString()}</small>
+                            <div class="actions">
+                                <button class="btn btn-danger btn-small" onclick="deleteMessage('${
+                                  msg._id
+                                }')">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    `
+              )
+              .join("");
+          } else {
+            messagesList.innerHTML =
+              '<p style="color: #6c757d; text-align: center;">No scheduled messages yet.</p>';
+          }
+        } catch (error) {
+          console.error("Error loading messages:", error);
+          document.getElementById("messagesList").innerHTML =
+            '<p style="color: #dc3545; text-align: center;">Error loading messages.</p>';
+        }
+      }
+
+      // Delete phone
+      async function deletePhone(id) {
+        if (!confirm("Are you sure you want to delete this phone number?"))
+          return;
+
+        try {
+          const result = await api.delete(`/api/phones/${id}`);
+          if (result.success) {
+            showAlert("phoneAlert", "Phone number deleted successfully!");
+            loadPhones();
+          } else {
+            showAlert("phoneAlert", result.message, "error");
+          }
+        } catch (error) {
+          showAlert("phoneAlert", "Error deleting phone number", "error");
+          console.error("Error:", error);
+        }
+      }
+
+      // Delete message
+      async function deleteMessage(id) {
+        if (!confirm("Are you sure you want to delete this scheduled message?"))
+          return;
+
+        try {
+          const result = await api.delete(`/api/messages/${id}`);
+          if (result.success) {
+            showAlert("messageAlert", "Message deleted successfully!");
+            loadMessages();
+          } else {
+            showAlert("messageAlert", result.message, "error");
+          }
+        } catch (error) {
+          showAlert("messageAlert", "Error deleting message", "error");
+          console.error("Error:", error);
+        }
+      }
+
+      // Load data on page load
+      window.addEventListener("DOMContentLoaded", () => {
+        loadPhones();
+        loadMessages();
+      });
+    </script>
+  </body>
+</html>
