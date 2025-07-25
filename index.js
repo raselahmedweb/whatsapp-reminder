@@ -118,5 +118,8 @@ async function startServer() {
     process.exit(1);
   }
 }
+setInterval(() => {
+  resolveServerDownIssue();
+}, 840000);
 
 startServer();
